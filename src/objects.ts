@@ -55,7 +55,7 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    const firstTen: string = question.name.substring(0, 9);
+    const firstTen: string = question.name.substring(0, 10);
     return `${question.id}: ${firstTen}`;
 }
 
@@ -80,7 +80,7 @@ export function toMarkdown(question: Question): string {
     const begin = `# ${question.name}\n${question.body}`;
     if (question.type === "multiple_choice_question") {
         return (
-            begin + `\n`.join(question.options.map((option) => `- ${option}`))
+            begin + question.options.map((option) => `\n- ${option}`).join("")
         );
     }
     return begin;
@@ -114,6 +114,7 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
         ...oldQuestion,
         name: `Copy of ${oldQuestion.name}`,
         published: false,
+        id: id,
     };
 }
 
@@ -125,7 +126,7 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  * Check out the subsection about "Nested Fields" for more information.
  */
 export function addOption(question: Question, newOption: string): Question {
-    return question;
+    return { ...question, options: [...question.options, newOption] };
 }
 
 /**
@@ -142,5 +143,11 @@ export function mergeQuestion(
     contentQuestion: Question,
     { points }: { points: number },
 ): Question {
-    return contentQuestion;
+    return {
+        ...contentQuestion,
+        id: id,
+        name: name,
+        points: points,
+        published: false,
+    };
 }
